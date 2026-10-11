@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}USB Device Monitoring System{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="app-header">
+    <div class="app-header__titles">
+      <h1>USB Device Monitoring System</h1>
+      <p class="subtitle">Examination Lab Monitoring</p>
+      <span class="role-badge">Professor&rsquo;s Monitoring Dashboard</span>
+    </div>
+    <div class="app-header__status">
+      <span id="server-status" class="status-pill status-pill--unknown"
+            role="status" aria-live="polite">Checking server&hellip;</span>
+      <form method="post" action="{{ url_for('auth.logout') }}" class="logout-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button type="submit" class="button button--ghost">Sign out</button>
+      </form>
+    </div>
+  </header>
+
+  <nav class="app-nav" aria-label="Primary">
+    <a href="{{ url_for('dashboard.index') }}"
+       class="nav-link{% if active == 'dashboard' %} nav-link--active{% endif %}"
+       {% if active == 'dashboard' %}aria-current="page"{% endif %}>Dashboard</a>
+    <a href="{{ url_for('dashboard.events_page') }}"
+       class="nav-link{% if active == 'events' %} nav-link--active{% endif %}"
+       {% if active == 'events' %}aria-current="page"{% endif %}>Event History</a>
+  </nav>
+
+  <main id="main" class="app-main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="app-footer">
+    <span>USB Device Monitoring System &mdash; offline LAN operation.
+      Events describe device connections and disconnections only.</span>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

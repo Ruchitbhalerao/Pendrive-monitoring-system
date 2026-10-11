@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ code }} {{ name }} - USB Device Monitoring System</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="error-page">
+  <main class="error-box">
+    <h1>USB Device Monitoring System</h1>
+    <p class="error-box__code">{{ code }} &mdash; {{ name }}</p>
+    <p class="error-box__message">{{ message }}</p>
+    <p><a class="button button--primary" href="{{ url_for('dashboard.index') }}">Back to dashboard</a></p>
+  </main>
+</body>
+</html>

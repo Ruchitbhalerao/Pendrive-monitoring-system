@@ -1,0 +1,53 @@
+# systemd unit for the USB monitoring client agent (one per lab PC).
+#
+# Install (as root):
+#   install -d -o root -g root -m 0755 /opt/exam-monitor
+#   install -d -o exam-monitor -g exam-monitor -m 0750 /var/lib/exam-monitor
+#   install -d -o root -g root -m 0750 /etc/exam-monitor
+#   install -m 0644 deploy/exam-monitor-client.service /etc/systemd/system/
+#   install -m 0640 deploy/client.env.example /etc/exam-monitor/client.env
+#   ${EDITOR:-vi} /etc/exam-monitor/client.env      # set SERVER_URL/AUTH_TOKEN/COMPUTER_ID
+#   chown root:exam-monitor /etc/exam-monitor/client.env
+#   systemctl daemon-reload
+#   systemctl enable --now exam-monitor-client.service
+#
+# Access to USB monitoring: the agent must read the udev netlink socket. The
+# "exam-monitor" account is added to the "plugdev" group (see README). If your
+# udev rules require it, run as root instead, but a dedicated account that is a
+# member of plugdev is preferred.
+
+[Unit]
+Description=USB Device Monitoring - client agent
+Documentation=file:/opt/exam-monitor/README.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=exam-monitor
+Group=plugdev
+SupplementaryGroups=plugdev
+WorkingDirectory=/opt/exam-monitor
+EnvironmentFile=/etc/exam-monitor/client.env
+ExecStart=/opt/exam-monitor/venv/bin/python -m client.agent
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=15
+KillSignal=SIGTERM
+
+# Logging is collected by journald (view with: journalctl -u exam-monitor-client).
+StandardOutput=journal
+StandardError=journal
+
+# Hardening.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+ReadWritePaths=/var/lib/exam-monitor
+
+[Install]
+WantedBy=multi-user.target

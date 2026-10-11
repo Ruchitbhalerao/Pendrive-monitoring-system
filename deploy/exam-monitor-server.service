@@ -1,0 +1,56 @@
+# systemd unit for the central USB monitoring server.
+#
+# Install (as root):
+#   install -d -o root -g root -m 0755 /opt/exam-monitor
+#   install -d -o exam-monitor -g exam-monitor -m 0750 /var/lib/exam-monitor
+#   install -d -o root -g root -m 0750 /etc/exam-monitor
+#   install -m 0644 deploy/exam-monitor-server.service /etc/systemd/system/
+#   install -m 0640 deploy/server.env.example /etc/exam-monitor/server.env
+#   ${EDITOR:-vi} /etc/exam-monitor/server.env     # set real secrets
+#   chown root:exam-monitor /etc/exam-monitor/server.env
+#   systemctl daemon-reload
+#   systemctl enable --now exam-monitor-server.service
+#
+# The unit runs under the dedicated, non-root "exam-monitor" account and loads
+# secrets from /etc/exam-monitor/server.env (not hardcoded here).
+
+[Unit]
+Description=USB Device Monitoring - central server
+Documentation=file:/opt/exam-monitor/README.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=exam-monitor
+Group=exam-monitor
+WorkingDirectory=/opt/exam-monitor
+EnvironmentFile=/etc/exam-monitor/server.env
+# systemd expands ${HOST} and ${PORT} from the EnvironmentFile.
+ExecStart=/opt/exam-monitor/venv/bin/gunicorn \
+    --workers 2 \
+    --bind ${HOST}:${PORT} \
+    --access-logfile - \
+    --error-logfile - \
+    wsgi:application
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=20
+KillSignal=SIGTERM
+
+# Logging is collected by journald (view with: journalctl -u exam-monitor-server).
+StandardOutput=journal
+StandardError=journal
+
+# Hardening: unset privileges where practical, allow writes only where needed.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+ReadWritePaths=/var/lib/exam-monitor
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - USB Device Monitoring System{% endblock %}
+
+{% block content %}
+<section class="cards" aria-label="Monitoring summary">
+  <article class="card">
+    <h2 class="card__title">Registered Computers</h2>
+    <p class="card__value" id="card-total">&ndash;</p>
+  </article>
+  <article class="card">
+    <h2 class="card__title">Online (recent heartbeat)</h2>
+    <p class="card__value card__value--online" id="card-online">&ndash;</p>
+  </article>
+  <article class="card">
+    <h2 class="card__title">Stale / no recent heartbeat</h2>
+    <p class="card__value card__value--stale" id="card-stale">&ndash;</p>
+  </article>
+  <article class="card">
+    <h2 class="card__title">Recorded Events</h2>
+    <p class="card__value" id="card-events">&ndash;</p>
+  </article>
+</section>
+<p class="hint" id="status-rule" hidden></p>
+
+<section class="panel" aria-labelledby="computers-heading">
+  <div class="panel__header">
+    <h2 id="computers-heading">Monitored Computers</h2>
+    <span class="refresh-info" id="computers-refresh"></span>
+  </div>
+  <div class="alert alert--error" id="computers-error" hidden></div>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th scope="col">Computer ID</th>
+          <th scope="col">Last heartbeat</th>
+          <th scope="col">Last activity</th>
+          <th scope="col">Events</th>
+          <th scope="col">Status</th>
+          <th scope="col"><span class="visually-hidden">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody id="computers-body"></tbody>
+    </table>
+  </div>
+  <p class="empty-state" id="computers-empty" hidden>No computers have reported yet.</p>
+</section>
+
+<section class="panel" aria-labelledby="alerts-heading">
+  <div class="panel__header">
+    <h2 id="alerts-heading">Recent Alerts</h2>
+    <span class="refresh-info" id="alerts-refresh"></span>
+  </div>
+  <div class="alert alert--error" id="alerts-error" hidden></div>
+  <ul class="alert-list" id="alerts-list"></ul>
+  <p class="empty-state" id="alerts-empty" hidden>No events recorded yet.</p>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Event History - USB Device Monitoring System{% endblock %}
+
+{% block content %}
+<section class="panel" aria-labelledby="filters-heading">
+  <div class="panel__header">
+    <h2 id="filters-heading">Event History</h2>
+    <span class="refresh-info" id="events-refresh"></span>
+  </div>
+
+  <form class="filters" id="filters-form" method="get" action="{{ url_for('dashboard.events_page') }}">
+    <div class="field">
+      <label for="filter-computer">Computer ID</label>
+      <input type="text" id="filter-computer" name="computer_id" maxlength="64"
+             placeholder="e.g. LAB-PC-01" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="filter-type">Event type</label>
+      <select id="filter-type" name="event_type">
+        <option value="">All</option>
+        <option value="connected">Connected</option>
+        <option value="disconnected">Disconnected</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="filter-category">Device category</label>
+      <select id="filter-category" name="device_category">
+        <option value="">All</option>
+        <option value="usb_storage">USB storage</option>
+        <option value="usb_peripheral">USB peripheral</option>
+        <option value="unknown">Unknown</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="filter-search">Search</label>
+      <input type="search" id="filter-search" name="q" maxlength="128"
+             placeholder="Computer ID or device name" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="filter-per-page">Rows per page</label>
+      <select id="filter-per-page" name="per_page">
+        <option value="20">20</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      </select>
+    </div>
+    <div class="filters__actions">
+      <button type="submit" class="button button--primary">Apply filters</button>
+      <button type="button" class="button" id="clear-filters">Clear</button>
+    </div>
+  </form>
+</section>
+
+<section class="panel" aria-labelledby="results-heading">
+  <div class="panel__header">
+    <h2 id="results-heading">Results</h2>
+    <span class="refresh-info" id="results-count"></span>
+  </div>
+  <div class="alert alert--error" id="events-error" hidden></div>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th scope="col">Time</th>
+          <th scope="col">Computer</th>
+          <th scope="col">Event</th>
+          <th scope="col">Category</th>
+          <th scope="col">Device</th>
+        </tr>
+      </thead>
+      <tbody id="events-body"></tbody>
+    </table>
+  </div>
+  <p class="empty-state" id="events-empty" hidden>No events match the current filters.</p>
+
+  <nav class="pagination" id="pagination" aria-label="Pagination" hidden>
+    <button type="button" class="button" id="page-prev">Previous</button>
+    <span class="pagination__status" id="page-status"></span>
+    <button type="button" class="button" id="page-next">Next</button>
+  </nav>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/events.js') }}"></script>
+{% endblock %}

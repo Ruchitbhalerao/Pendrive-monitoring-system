@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in - USB Device Monitoring System</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="login-page">
+  <main class="login-box">
+    <h1>USB Device Monitoring System</h1>
+    <p class="login-box__subtitle">Professor&rsquo;s Monitoring Dashboard</p>
+
+    {% if error %}
+    <div class="alert alert--error" role="alert">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" action="{{ url_for('auth.login_submit') }}" class="login-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <input type="hidden" name="next" value="{{ next_target }}">
+      <div class="field">
+        <label for="password">Dashboard password</label>
+        <input type="password" id="password" name="password" autocomplete="current-password"
+               autofocus required>
+      </div>
+      <button type="submit" class="button button--primary">Sign in</button>
+    </form>
+
+    <p class="login-box__hint">
+      Enter the dashboard token configured by the administrator
+      (<code>DASHBOARD_TOKEN</code>). It is not the client ingestion token.
+    </p>
+  </main>
+</body>
+</html>

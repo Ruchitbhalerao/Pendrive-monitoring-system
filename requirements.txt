@@ -1,0 +1,9 @@
+Flask>=3.0,<4.0
+pytest>=7.0
+
+# Production WSGI server for the central server (systemd unit). Linux only.
+gunicorn>=21.0; sys_platform == "linux"
+
+# USB monitoring dependency, Linux only. The environment marker keeps this
+# out of macOS installs so the server and tests run there without udev.
+pyudev>=0.24; sys_platform == "linux"
