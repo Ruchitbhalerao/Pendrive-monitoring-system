@@ -31,6 +31,37 @@ state in `/var/lib/exam-monitor`, and everything runs under the dedicated
 
 ---
 
+## Quick start (recommended)
+
+Two scripts in `deploy/` automate everything below. They are idempotent (safe to
+re-run) and do not overwrite existing secrets.
+
+**On the server:**
+
+```bash
+cd /path/to/Exam-monitor
+sudo ./deploy/install-server.sh
+```
+
+The script prints the dashboard password and the client ingestion token at the
+end. **Copy the ingestion token** - every client needs it.
+
+**On each monitored PC** (unique `COMPUTER_ID` per machine):
+
+```bash
+cd /path/to/Exam-monitor
+sudo ./deploy/install-client.sh \
+    --computer-id LAB-PC-01 \
+    --server-url http://<server-lan-ip>:5000 \
+    --token '<server AUTH_TOKEN>'
+```
+
+That's it. The client reports to the dashboard within ~30 seconds. The rest of
+this document explains the manual steps (use them if a script fails or you need
+to customize something).
+
+---
+
 ## Part A - Set up the server
 
 Run all of these on the PC chosen as the server.

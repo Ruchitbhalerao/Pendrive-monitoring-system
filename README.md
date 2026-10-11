@@ -51,6 +51,8 @@ tests/
 run.py                 # Development entry point (Flask dev server)
 wsgi.py                # Production WSGI entry point (gunicorn/uWSGI)
 deploy/
+    install-server.sh            # one-shot automated server installer (Ubuntu)
+    install-client.sh            # one-shot automated client installer (Ubuntu)
     exam-monitor-server.service  # systemd unit for the central server
     exam-monitor-client.service  # systemd unit for the client agent
     server.env.example           # /etc/exam-monitor/server.env template
@@ -459,6 +461,15 @@ Both are clearly separated from real detection: synthetic events carry a
   production where practical. This stage does not configure TLS.
 
 ## Deploy on Ubuntu with systemd
+
+> **Fast path:** for a college lab, the bundled
+> [`deploy/install-server.sh`](deploy/install-server.sh) and
+> [`deploy/install-client.sh`](deploy/install-client.sh) scripts automate every
+> step in this section (packages, service account, venv, secrets, systemd units).
+> Run `sudo ./deploy/install-server.sh` on the server and
+> `sudo ./deploy/install-client.sh --computer-id LAB-PC-01 --server-url http://<server-ip>:5000 --token '<AUTH_TOKEN>'`
+> on each client. See [`LAB_SETUP.md`](LAB_SETUP.md) for the guided walkthrough.
+> The manual steps below remain the source of truth if you need to customize.
 
 These steps run the server under gunicorn (via `wsgi.py`) and the client agent
 as managed services that restart on failure and start on boot. They use a
